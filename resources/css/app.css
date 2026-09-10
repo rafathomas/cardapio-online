@@ -1,0 +1,158 @@
+@import 'tailwindcss';
+
+/*
+|------------------------------------------------------------------------------
+| Design tokens
+|------------------------------------------------------------------------------
+| Paleta "apetitosa": vermelho quente como cor de acao, dourado como destaque.
+| As superficies publicas usam o fundo quente; o painel usa neutro para nao
+| cansar em uso prolongado.
+|
+| Cada estabelecimento pode sobrescrever --color-brand e --color-brand-soft
+| no proprio cardapio (ver public/menu.blade.php).
+*/
+@theme {
+    --color-brand: #dc2626;
+    --color-brand-strong: #b91c1c;
+    --color-brand-soft: #fef2f2;
+    --color-brand-border: #fecaca;
+    --color-on-brand: #ffffff;
+
+    --color-accent: #a16207;
+    --color-on-accent: #ffffff;
+
+    --color-ink: #450a0a;
+    --color-ink-muted: #475569;
+
+    --color-surface: #ffffff;
+    --color-surface-muted: #f8fafc;
+    --color-surface-warm: #fef2f2;
+
+    --color-line: #e2e8f0;
+
+    --color-success: #15803d;
+    --color-success-soft: #dcfce7;
+    --color-warning: #b45309;
+    --color-warning-soft: #fef3c7;
+    --color-danger: #dc2626;
+    --color-danger-soft: #fee2e2;
+
+    --font-sans: 'Karla', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Playfair Display SC', Georgia, serif;
+
+    --radius-card: 0.875rem;
+
+    --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px rgb(15 23 42 / 0.06);
+    --shadow-lifted: 0 8px 32px rgb(15 23 42 / 0.12);
+
+    --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+    html {
+        -webkit-text-size-adjust: 100%;
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply bg-surface text-ink font-sans antialiased;
+        /* Evita refresh acidental ao arrastar o carrinho no celular. */
+        overscroll-behavior-y: contain;
+    }
+
+    /* Foco sempre visivel: nunca remover, apenas estilizar. */
+    :focus-visible {
+        @apply outline-2 outline-offset-2 outline-brand rounded-sm;
+    }
+
+    [hidden] {
+        display: none !important;
+    }
+}
+
+/*
+ * `tap` e `btn` sao utilitarios (nao componentes) porque o @apply do Tailwind 4
+ * so aceita utilitarios — e as variantes de botao precisam aplicá-los.
+ */
+@utility tap {
+    /* Alvo de toque minimo de 44px, exigido em telas pequenas. */
+    @apply min-h-11 min-w-11 cursor-pointer transition-colors duration-200;
+}
+
+@utility btn {
+    @apply tap inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5
+           text-sm font-semibold whitespace-nowrap
+           disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+@layer components {
+    .btn-primary {
+        @apply btn bg-brand text-on-brand hover:bg-brand-strong active:scale-[0.98];
+    }
+
+    .btn-secondary {
+        @apply btn border border-line bg-surface text-ink hover:bg-surface-muted;
+    }
+
+    .btn-ghost {
+        @apply btn text-ink-muted hover:bg-surface-muted hover:text-ink;
+    }
+
+    .btn-danger {
+        @apply btn bg-danger text-white hover:bg-brand-strong;
+    }
+
+    .card {
+        @apply rounded-card border border-line bg-surface shadow-card;
+    }
+
+    .field {
+        @apply w-full rounded-xl border border-line bg-surface px-3.5 py-2.5 text-base
+               text-ink placeholder:text-slate-400
+               focus:border-brand focus:ring-2 focus:ring-brand/20 focus:outline-none
+               disabled:bg-surface-muted;
+    }
+
+    .label {
+        @apply mb-1.5 block text-sm font-semibold text-ink;
+    }
+
+    .hint {
+        @apply mt-1.5 text-sm text-ink-muted;
+    }
+
+    .error {
+        @apply mt-1.5 flex items-start gap-1.5 text-sm font-medium text-danger;
+    }
+
+    .badge {
+        @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold;
+    }
+}
+
+/* Respeita quem pediu menos movimento no sistema operacional. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.animate-rise {
+    animation: rise 0.35s var(--ease-out-soft) both;
+}
